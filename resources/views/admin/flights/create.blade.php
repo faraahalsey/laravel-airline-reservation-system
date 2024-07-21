@@ -67,13 +67,13 @@
                   </div>
                 </div>
 
-                {{-- time (departure, arival) --}}
+                {{-- time (departure, arrival) --}}
                 <div class="row mb-4">
-                  <label for="loan_limit" class="col-sm-3 col-form-label">@lang('translation.flight.time')</label>
+                  <label for="time" class="col-sm-3 col-form-label">@lang('translation.flight.time')</label>
                   <div class="col-sm-9">
                     <div class="input-daterange input-group" id="datepicker" data-date-format="yyyy-m-d" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker'>
-                      <input type="date" class="form-control filter-input" id="departure" name="departure" placeholder="@lang('translation.flight.departure')" required />
-                      <input type="date" class="form-control filter-input" id="arrival" name="arrival" placeholder="@lang('translation.flight.arrival')" required />
+                      <input type="text" class="form-control datetimepicker" id="departure" name="departure" placeholder="@lang('translation.flight.departure')" required />
+                      <input type="text" class="form-control datetimepicker" id="arrival" name="arrival" placeholder="@lang('translation.flight.arrival')" required />
 
                       <div class="valid-feedback">
                         @lang('validation.good')
@@ -87,12 +87,12 @@
 
                 {{-- route (origin, destination) --}}
                 <div class="row mb-4">
-                  <label for="loan_limit" class="col-sm-3 col-form-label">@lang('translation.flight.route')</label>
+                  <label for="route" class="col-sm-3 col-form-label">@lang('translation.flight.route')</label>
                   <div class="col-sm-9">
                     <div class="row">
                       <div class="col-md-6">
                         <div class="mb-3">
-                          <label for="origin" class="col-sm-3 col-form-label">@lang('translation.flight.origin')</label>
+                          <label for="origin" class="col-form-label">@lang('translation.flight.origin')</label>
                           <select class="form-control select2" id="origin" name="origin_id" required>
                             <option value="">@lang('translation.none')</option>
                             @foreach ($airports as $key => $value)
@@ -110,7 +110,7 @@
 
                       <div class="col-md-6">
                         <div class="mb-3">
-                          <label for="destination" class="col-sm-3 col-form-label">@lang('translation.flight.destination')</label>
+                          <label for="destination" class="col-form-label">@lang('translation.flight.destination')</label>
                           <select class="form-control select2" id="destination" name="destination_id" required>
                             <option value="">@lang('translation.none')</option>
                             @foreach ($airports as $key => $value)
@@ -156,81 +156,82 @@
               </div>
             </div>
           </form>
-
-
         </div>
       </div>
       <!-- end card -->
     </div> <!-- end col -->
   </div>
 @endsection
+
 @section('script')
-  {{-- bootstrap-datepicker --}}
-  <script src="{{ URL::asset('assets/libs/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
+  <!-- Flatpickr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <!-- Flatpickr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
   <script>
     // ready document 
     $(document).ready(function() {
-      // init datepicker
-      $('.input-daterange').datepicker({
-        autoclose: true,
-        startDate: new Date()
-      });
+        // init Flatpickr
+        flatpickr('.datetimepicker', {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i:S",
+        });
 
-      //on chanage airline select
-      $('#airline').on('change', function() {
-        //get airline id
-        let airline_id = $(this).val();
-        //if airline id is not empty
-        if (airline_id != '') {
-          //get planes by airline id
-          // before send ajax request reset plane select
-          $('#plane').html('');
-          $.ajax({
-            url: "{{ route('flights.getPlanesByAirline') }}",
-            type: "GET",
-            data: {
-              airline_id: airline_id
-            },
-            success: function(data) {
-              //if data is not empty
-              if (data != '') {
-                //set plane select2 options
-                $('#plane').select2({
-                  data: data
+        // on change airline select
+        $('#airline').on('change', function() {
+            // get airline id
+            let airline_id = $(this).val();
+            // if airline id is not empty
+            if (airline_id != '') {
+                // get planes by airline id
+                // before send ajax request reset plane select
+                $('#plane').html('');
+                $.ajax({
+                    url: "{{ route('flights.getPlanesByAirline') }}",
+                    type: "GET",
+                    data: {
+                        airline_id: airline_id
+                    },
+                    success: function(data) {
+                        // if data is not empty
+                        if (data != '') {
+                            // set plane select2 options
+                            $('#plane').select2({
+                                data: data
+                            });
+                        } else {
+                            $('#plane').select2({
+                                data: [{
+                                    id: '',
+                                    text: "@lang('translation.flight.no_plane_found')"
+                                }]
+                            });
+                        }
+                    }
                 });
-              } else {
-                $('#plane').select2({
-                  data: [{
-                    id: '',
-                    text: "@lang('translation.flight.no_plane_found')"
-                  }]
+            }
+        });
+
+        // origin and destination should not be same
+        $('#destination').on('change', function() {
+            let destination = $(this).val();
+            let origin = $('#origin').val();
+            if (origin == destination) {
+                swal.fire({
+                    text: "@lang('messages.origin_destination_same')",
+                    icon: "error",
+                    timer: 1000,
+                    showCancelButton: false,
+                    confirmButtonText: "@lang('buttons.ok')",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#destination').val('').trigger('change');
+                    }
                 });
-              }
             }
-          });
-        }
-      });
-
-      // origin and destination should not be same
-      $('#destination').on('change', function() {
-        let destination = $(this).val();
-        let origin = $('#origin').val();
-        if (origin == destination) {
-          swal.fire({
-            text: "@lang('messages.origin_destination_same')",
-            icon: "error",
-            timer: 1000,
-            showCancelButton: false,
-            confirmButtonText: "@lang('buttons.ok')",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              $('#destination').val('').trigger('change');
-            }
-          });
-        }
-      });
-
+        });
     });
   </script>
 @endsection

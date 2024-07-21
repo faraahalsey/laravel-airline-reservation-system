@@ -15,8 +15,8 @@ return new class extends Migration
             $table->foreignId("plane_id")->constrained()->cascadeOnDelete();
             $table->foreignId("origin_id")->constrained("airports")->cascadeOnDelete();
             $table->foreignId("destination_id")->constrained("airports")->cascadeOnDelete();
-            $table->dateTime("departure");
-            $table->dateTime("arrival");
+            $table->datetime("departure");
+            $table->datetime("arrival");
             $table->integer("seats");
             $table->integer("remain_seats");
             $table->boolean('status')->default(true);

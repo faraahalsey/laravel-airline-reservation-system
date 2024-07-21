@@ -73,14 +73,13 @@
                   </div>
                 </div>
 
-                {{-- time (departure, arival) --}}
+                {{-- time (departure, arrival) --}}
                 <div class="row mb-4">
-                  <label for="loan_limit" class="col-sm-3 col-form-label">@lang('translation.flight.time')</label>
+                  <label for="flight-time" class="col-sm-3 col-form-label">@lang('translation.flight.time')</label>
                   <div class="col-sm-9">
-                    <div class="input-daterange input-group" id="datepicker" data-date-format="yyyy-m-d" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker'>
-                      <input type="date" class="form-control filter-input" id="departure" name="departure" placeholder="@lang('translation.flight.departure')" />
-                      <input type="date" class="form-control filter-input" id="arrival" name="arrival" placeholder="@lang('translation.flight.arrival')" />
-
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="departure" name="departure" placeholder="@lang('translation.flight.departure')" value="{{ old('departure', $flight->departure) }}" required />
+                      <input type="text" class="form-control" id="arrival" name="arrival" placeholder="@lang('translation.flight.arrival')" value="{{ old('arrival', $flight->arrival) }}" required />
                       <div class="valid-feedback">
                         @lang('validation.good')
                       </div>
@@ -93,15 +92,15 @@
 
                 {{-- route (origin, destination) --}}
                 <div class="row mb-4">
-                  <label for="loan_limit" class="col-sm-3 col-form-label">@lang('translation.flight.route')</label>
+                  <label for="route" class="col-sm-3 col-form-label">@lang('translation.flight.route')</label>
                   <div class="col-sm-9">
                     <div class="row">
                       <div class="col-md-6">
                         <div class="mb-3">
-                          <label for="origin" class="col-sm-3 col-form-label">@lang('translation.flight.origin')</label>
+                          <label for="origin" class="col-form-label">@lang('translation.flight.origin')</label>
                           <select class="form-control select2" id="origin" name="origin_id" required>
                             <option value="">@lang('translation.none')</option>
-                            @foreach ($airlines as $key => $value)
+                            @foreach ($airports as $key => $value)
                               <option value="{{ $key }}" @selected($key === $flight->origin_id)>{{ $value }}</option>
                             @endforeach
                           </select>
@@ -116,10 +115,10 @@
 
                       <div class="col-md-6">
                         <div class="mb-3">
-                          <label for="destination" class="col-sm-3 col-form-label">@lang('translation.flight.destination')</label>
+                          <label for="destination" class="col-form-label">@lang('translation.flight.destination')</label>
                           <select class="form-control select2" id="destination" name="destination_id" required>
                             <option value="">@lang('translation.none')</option>
-                            @foreach ($airlines as $key => $value)
+                            @foreach ($airports as $key => $value)
                               <option value="{{ $key }}" @selected($key === $flight->destination_id)>{{ $value }}</option>
                             @endforeach
                           </select>
@@ -162,56 +161,48 @@
               </div>
             </div>
           </form>
-
-
         </div>
       </div>
       <!-- end card -->
     </div> <!-- end col -->
   </div>
 @endsection
-@section('script')
-  {{-- bootstrap-datepicker --}}
-  <script src="{{ URL::asset('assets/libs/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
 
+@section('script')
+  {{-- Flatpickr --}}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
-    // ready document 
-    $(document).ready(function() {
-      // init datepicker
-      $('.input-daterange').datepicker({
-        autoclose: true,
-        startDate: new Date()
+    document.addEventListener('DOMContentLoaded', function() {
+      // Init Flatpickr
+      flatpickr('#departure', {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i:S",
+        minDate: "today",
+        time_24hr: true
       });
 
-      //on chanage airline select
+      flatpickr('#arrival', {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i:S",
+        minDate: "today",
+        time_24hr: true
+      });
+
+      // On change airline select
       $('#airline').on('change', function() {
-        //get airline id
         let airline_id = $(this).val();
-        //if airline id is not empty
         if (airline_id != '') {
-          //get planes by airline id
-          // before send ajax request reset plane select
           $('#plane').html('');
           $.ajax({
             url: "{{ route('flights.getPlanesByAirline') }}",
             type: "GET",
-            data: {
-              airline_id: airline_id
-            },
+            data: { airline_id: airline_id },
             success: function(data) {
-              //if data is not empty
               if (data != '') {
-                //set plane select2 options
-                $('#plane').select2({
-                  data: data
-                });
+                $('#plane').select2({ data: data });
               } else {
-                $('#plane').select2({
-                  data: [{
-                    id: '',
-                    text: "@lang('translation.flight.no_plane_found')"
-                  }]
-                });
+                $('#plane').select2({ data: [{ id: '', text: "@lang('translation.flight.no_plane_found')" }] });
               }
             }
           });

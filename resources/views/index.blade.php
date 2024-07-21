@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -10,28 +9,166 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="{{ asset('frontend/style.css') }}" />
   <title>{{ config('app.name') }}</title>
-</head>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .front-page {
+      position: relative;
+      text-align: center;
+    }
+    .hero {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+    }
+    .links a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+    .primary-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .selling-point {
+      color: #fff;
+      text-align: center;
+    }
+    .selling-point h2 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+    .selling-point h3 {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+    .ctas {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .cta-main, .cta-sec {
+      background-color: #ff7e67;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+    .cta-main a, .cta-sec a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: bold;
+    }
+    .classes {
+      padding: 40px 0;
+      text-align: center;
+    }
+    .classes-description h2 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+    .classes-description h3 {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+      color: #666;
+    }
+    .images {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 20px;
+    }
+    .images div {
+      flex: 1 1 30%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 2px solid #ccc;
+      padding: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease-in-out;
+    }
+    .images div:hover {
+      transform: scale(1.05);
+    }
+    .images h3 {
+      margin-bottom: 10px;
+      font-size: 1.2em;
+      color: #333;
+    }
+    .images .image {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    .about {
+      padding: 40px 0;
+      text-align: center;
+    }
+    .about .our-story {
+      margin-bottom: 20px;
+    }
+    .about h2 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+    .about p {
+      font-size: 1em;
+      color: #666;
 
+    }
+    footer {
+      text-align: center;
+      padding: 20px 0;
+      background-color: #f8f8f8;
+    }
+    footer p {
+      margin: 0;
+      font-size: 0.9em;
+      color: #666;
+    }
+  </style>
+</head>
 <body>
-  <div class="conatiner">
+  <div class="container">
     <section class="front-page">
-      <img class="hero" src="{{ asset('frontend/assets/hero.png') }}" alt="meditation" autoplay />
-      <video muted autoplay loop class="hero" src="{{ asset('frontend/assets/video.mp4') }}"></video>
+      <img class="hero" src="{{ asset('frontend/assets/hero.png') }}" alt="meditation">
+      <img class="hero" src="{{ asset('frontend/assets/background.png') }}" alt="Hero Image">
       <nav>
-        <div class="logo">
-          <img src="{{ asset('frontend/assets/logo.png') }}" alt="mind & body" style="width: 15rem" />
-          {{-- <h1>SULAYMANIYAH INTERNATIONAL AIRPORT</h1> --}}
-        </div>
         <div class="links">
           @auth
             @if (Auth::user()->is_admin)
-              <a href="{{ route('root') }}">Dashbaord</a>
+              <a href="{{ route('root') }}">Dashboard</a>
             @else
-              <a href="{{ route('root') }}">Dashbaord</a>
+              <a href="{{ route('root') }}">Dashboard</a>
               <a href="{{ route('tickets.flights') }}">Book a Flight</a>
               <a href="{{ route('tickets.userTickets') }}">My Booking</a>
             @endif
-            <a href="javascript:void();" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bx bx-power-off font-size-16 me-1 text-danger align-middle"></i> @lang('translation.Logout')</a>
+            <a href="javascript:void();" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+              <i class="bx bx-power-off font-size-16 me-1 text-danger align-middle"></i> @lang('translation.Logout')
+            </a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
               @csrf
             </form>
@@ -47,13 +184,11 @@
           <line class="line" y1="9" x2="27" y2="9" stroke="white" stroke-width="2" />
           <line class="line" y1="17" x2="11" y2="17" stroke="white" stroke-width="2" />
         </svg>
-
       </nav>
       <div class="primary-overlay">
         <div class="selling-point">
-          <h2>Let your mind breathe.</h2>
-          <h3>
-            The world is a book and those who do not travel read only one page.
+          <h2>Welcome to CoudTrip.co</h2>
+          <h3>Fly with Malaysia Airlines by booking with us at an affordable price.
           </h3>
           <div class="ctas">
             @auth
@@ -77,39 +212,44 @@
       </div>
     </section>
 
-
     <section class="classes">
       <div class="classes-description">
-        <h2>Placees waiting for you</h2>
+        <h2>Top Destination</h2>
         <h3>It's time to heal your mind and body</h3>
       </div>
-      <div class="videos">
-        <div class="pilates">
-          <h3>Pilates</h3>
-          <video muted loop class="video" src="{{ asset('frontend/assets/travel-4.mp4') }}"></video>
+      <div class="images">
+        <div class="Langkawi">
+          <h3>Langkawi</h3>
+          <img class="image" src="{{ asset('frontend/assets/langkawi.jpg') }}" alt="Langkawi">
         </div>
-        <div class="yoga">
-          <h3>Yoga</h3>
-          <video muted loop class="video" src="{{ asset('frontend/assets/travel-2.mp4') }}"></video>
+        <div class="Sandakan">
+          <h3>Sandakan</h3>
+          <img class="image" src="{{ asset('frontend/assets/sandakan.jpg') }}" alt="Sandakan">
         </div>
-        <div class="meditation">
-          <h3>Meditation</h3>
-          <video muted loop class="video" src="{{ asset('frontend/assets/travel-3.mp4') }}"></video>
+        <div class="Kota Kinabalu">
+          <h3>Kota Kinabalu</h3>
+          <img class="image" src="{{ asset('frontend/assets/kotakinabalu.jpg') }}" alt="Kota Kinabalu">
         </div>
       </div>
     </section>
+
     <section class="about">
       <div class="our-story">
         <h2>About Us</h2>
-        <p>
-          Always a student, Janet has immersed herself in the ancient practices
-          of yoga for over thirty years. A global yoga teacher, she shares the
-          teachings from the heart. Through curiosity, devotion, and dedication
-          she creates a unique approach to living yoga.
+        <p style="text-align:justify;">
+          Welcome to CloudTrip.co, where simplicity meets efficiency in airline booking. 
+          At CloudTrip.co, we specialize in creating intuitive solutions for seamless travel experiences. 
+          Our dedicated team has crafted a user-friendly airline booking system tailored specifically for Malaysia Airlines. 
+          Whether you're a frequent flyer or planning your first trip, CloudTrip.co ensures a smooth booking process from start to finish. 
+          Experience convenience at your fingertips with CloudTrip.co - your trusted partner in travel.
         </p>
       </div>
-      <img src="{{ asset('frontend/assets/our-story.jpg') }}" alt="our-story" />
     </section>
+    <div class="images">
+        <div class="Promotion">
+        <h2>!!!NOW PROMOTION!!!</h2>
+          <img src="{{ asset('frontend/assets/promotion.jpg') }}" alt="Promotion" width="500" height="500">
+        </div>
 
   </div>
 
@@ -118,7 +258,7 @@
       <p>©
         <script>
           document.write(new Date().getFullYear())
-        </script> {{ config('app.name') }}. Crafted with ❤️
+        </script> {{ config('app.name') }}. Designed by CloudTrip.co
       </p>
     </div>
   </footer>
@@ -126,5 +266,4 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/ScrollTrigger.min.js"></script>
   <script src="{{ asset('frontend/script.js') }}"></script>
 </body>
-
 </html>
